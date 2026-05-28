@@ -98,7 +98,6 @@
             background: #000;
         }
 
-        /* المشغل الأساسي وتأثير الانتقال السلس بين الجودات */
         .video-wrapper video {
             width: 100%;
             display: block;
@@ -106,7 +105,6 @@
             transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* فلاش الـ AI السريع عند تبديل الجودة */
         @keyframes aiScan {
             0% { opacity: 0.6; filter: brightness(1.4); }
             100% { opacity: 1; filter: brightness(1); }
@@ -116,7 +114,7 @@
             animation: aiScan 0.3s ease-out;
         }
 
-        /* شريط التحكم في الجودات المتدرجة */
+        /* شريط التحكم في الجودات */
         .controls-panel {
             display: flex;
             justify-content: space-between;
@@ -156,7 +154,6 @@
             color: #fff;
         }
 
-        /* ستايل الزرار النشط حسب الجودة المفتوحة */
         .q-btn.active {
             background: linear-gradient(135deg, #00f2fe, #4facfe);
             color: #0b0d17;
@@ -182,7 +179,7 @@
             line-height: 1.6;
         }
 
-        /* قائمة التشغيل الـ 5 محاضرات */
+        /* قائمة التشغيل */
         .playlist-container {
             background: rgba(30, 41, 59, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -264,7 +261,7 @@
             <div class="video-player-container">
                 <div class="video-wrapper">
                     <video id="mainVideoPlayer" controls controlsList="nodownload">
-                        <source id="videoSource" src="videos/lesson1.mp4" type="video/mp4">
+                        <source id="videoSource" src="lesson1.mp4" type="video/mp4">
                         متصفحك لا يدعم مشغل الفيديو.
                     </video>
                 </div>
@@ -293,27 +290,27 @@
                 
                 <div class="playlist-items">
                     
-                    <div class="playlist-item active" onclick="changeVideo('videos/lesson1.mp4', 'المحاضرة الأولى: أسرار روابط الزمن وتريكات When & While', 'شرح تفصيلي شامل لكيفية ربط أحداث الماضي المستمر بالماضي البسيط باستخدام قاعدة When و While.', this)">
+                    <div class="playlist-item active" onclick="changeVideo('lesson1.mp4', 'المحاضرة الأولى: أسرار روابط الزمن وتريكات When & While', 'شرح تفصيلي شامل لكيفية ربط أحداث الماضي المستمر بالماضي البسيط باستخدام قاعدة When و While.', this)">
                         <div class="item-title">المحاضرة الأولى: قاعدة When & While</div>
                         <div class="item-meta">MP4 Video</div>
                     </div>
 
-                    <div class="playlist-item" onclick="changeVideo('videos/lesson2.mp4', 'المحاضرة الثانية: تطوير مهارات التحدث بطلاقة واستخدام التراكيب الكبرى', 'في هذه المحاضرة، نركز على كسر حاجز الخوف عند التحدث بالإنجليزية واستخدام التراكيب اللغوية الصحيحة.', this)">
+                    <div class="playlist-item" onclick="changeVideo('lesson2.mp4', 'المحاضرة الثانية: تطوير مهارات التحدث بطلاقة واستخدام التراكيب الكبرى', 'في هذه المحاضرة، نركز على كسر حاجز الخوف عند التحدث بالإنجليزية واستخدام التراكيب اللغوية الصحيحة.', this)">
                         <div class="item-title">المحاضرة الثانية: مهارات التحدث</div>
                         <div class="item-meta">MP4 Video</div>
                     </div>
 
-                    <div class="playlist-item" onclick="changeVideo('videos/lesson3.mp4', 'المحاضرة الثالثة: قواعد الكتابة الاحترافية وصياغة المقال الوزاري المقالي', 'نتعلم في هذا الدرس خطوة بخطوة كيف تكتب جملاً سليمة خالية من الأخطاء الإملائية والنحوية لتصنع مقالاً احترافياً.', this)">
+                    <div class="playlist-item" onclick="changeVideo('lesson3.mp4', 'المحاضرة الثالثة: قواعد الكتابة الاحترافية وصياغة المقال الوزاري المقالي', 'نتعلم في هذا الدرس خطوة بخطوة كيف تكتب جملاً سليمة خالية من الأخطاء الإملائية والنحوية لتصنع مقالاً احترافياً.', this)">
                         <div class="item-title">المحاضرة الثالثة: مهارات الكتابة</div>
                         <div class="item-meta">MP4 Video</div>
                     </div>
 
-                    <div class="playlist-item" onclick="changeVideo('videos/lesson4.mp4', 'المحاضرة الرابعة: تكتيكات قطاع الاستماع وفهم اللكنة البريطانية والأمريكية', 'تدريبات عمليّة مكثفة لتطوير حاسة الاستماع والقدرة على فهم الكلمات السريعة بسهولة ومن أول مرة وبدون أخطاء.', this)">
+                    <div class="playlist-item" onclick="changeVideo('lesson4.mp4', 'المحاضرة الرابعة: تكتيكات قطاع الاستماع وفهم اللكنة البريطانية والأمريكية', 'تدريبات عمليّة مكثفة لتطوير حاسة الاستماع والقدرة على فهم الكلمات السريعة بسهولة ومن أول مرة وبدون أخطاء.', this)">
                         <div class="item-title">المحاضرة الرابعة: مهارات الاستماع</div>
                         <div class="item-meta">MP4 Video</div>
                     </div>
 
-                    <div class="playlist-item" onclick="changeVideo('videos/lesson5.mp4', 'المحاضرة الخامسة: استراتيجيات القراءة السريعة وحل قطع الفهم المعقدة', 'شرح تقنيات القراءة الذكية لاستخراج الإجابات من القطع الطويلة في الامتحانات بأقل مجهود وبأعلى دقة ممكنة.', this)">
+                    <div class="playlist-item" onclick="changeVideo('lesson5.mp4', 'المحاضرة الخامسة: استراتيجيات القراءة السريعة وحل قطع الفهم المعقدة', 'شرح تقنيات القراءة الذكية لاستخراج الإجابات من القطع الطويلة في الامتحانات بأقل مجهود وبأعلى دقة ممكنة.', this)">
                         <div class="item-title">المحاضرة الخامسة: مهارات القراءة</div>
                         <div class="item-meta">MP4 Video</div>
                     </div>
@@ -325,7 +322,6 @@
     </div>
 
     <script>
-        // دالة تغيير المحاضرة
         function changeVideo(videoPath, title, description, element) {
             const player = document.getElementById('mainVideoPlayer');
             const source = document.getElementById('videoSource');
@@ -342,19 +338,15 @@
             });
             element.classList.add('active');
             
-            // إرجاع الجودة الفائقة افتراضياً عند فتح فيديو جديد
             applyQuality(1080);
         }
 
-        // دالة التدرج السحري للجودات بأعلى معايير الألوان والوضوح
         function applyQuality(resolution) {
             const player = document.getElementById('mainVideoPlayer');
             
-            // عمل فلاش معالجة سريع
             player.classList.add('ai-processing');
             setTimeout(() => player.classList.remove('ai-processing'), 300);
 
-            // تفريغ الأزرار النشطة
             document.querySelectorAll('.q-btn').forEach(btn => btn.classList.remove('active'));
             
             if (resolution === 144) {
@@ -371,12 +363,10 @@
             } 
             else if (resolution === 720) {
                 document.getElementById('q720').classList.add('active');
-                // بداية زيادة تشبع الألوان والتباين
                 player.style.filter = "contrast(1.12) brightness(1.04) saturate(1.2) drop-shadow(0px 0px 1px rgba(0,0,0,0.5))";
             } 
             else if (resolution === 1080) {
                 document.getElementById('q1080').classList.add('active');
-                // الجودة القصوى: تباين فائق (1.25) وألوان سينمائية مشبعة (1.35) مع فلاتر الظل المزدوج لإبراز النصوص والحدود
                 player.style.filter = "contrast(1.25) brightness(1.06) saturate(1.35) drop-shadow(0px 0px 1px rgba(0,0,0,0.8)) drop-shadow(0px 0px 1px rgba(0,0,0,0.8))";
             }
         }
