@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لغتيان - ساحة التحدي والألعاب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0d17, #111424); 
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* نفيجيشن بار المنصة الموحد */
+        nav {
+            background-color: rgba(11, 13, 23, 0.9);
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #38bdf8; 
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* الحاوية الرئيسية */
+        .main-container {
+            max-width: 1100px;
+            margin: 120px auto 60px auto;
+            padding: 0 20px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==================== 👤 قسم البروفايل (Profile Card) ==================== */
+        .profile-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 30px 20px;
+            border-radius: 24px;
+            text-align: center;
+            height: fit-content;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px auto;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #38bdf8;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .rank-badge {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #fbbf24;
+            color: #0b0d17;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4);
+        }
+
+        .profile-card h3 {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .user-title {
+            font-size: 13px;
+            color: #a855f7;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+        }
+
+        .stat-box {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-box span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .stat-box var {
+            font-style: normal;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* ==================== 🎮 قسم ساحة ألعاب الصحاب ==================== */
+        .game-arena {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .arena-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(to left, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .arena-header p {
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        /* صندوق اللعبة الجديدة: قناص الكلمات السريع */
+        .game-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* شريط الوقت والعداد النيوني */
+        .timer-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #ef4444, #38bdf8);
+            transition: width 0.1s linear;
+        }
+
+        .game-meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .live-timer {
+            font-size: 14px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* الكلمة المستهدفة الكبرى */
+        .target-word-box {
+            margin: 20px 0 40px 0;
+        }
+
+        .target-word-box span {
+            font-size: 14px;
+            color: #64748b;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .target-word-box h2 {
+            font-size: 42px;
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        /* شبكة أزرار الاختيارات السريعة */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 500px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-btn {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px;
+            border-radius: 16px;
+            color: #cbd5e1;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.1);
+        }
+
+        /* كرت المتصدرين بين الصحاب */
+        .leaderboard-card {
+            background: rgba(30, 41, 59, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .leaderboard-card h4 {
+            font-size: 16px;
+            color: #fbbf24;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .friend-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .friend-row:last-child { border: none; }
+
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .friend-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .friend-name { font-size: 14px; color: #cbd5e1; }
+        .friend-score { font-size: 13px; font-weight: bold; color: #38bdf8; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo-text">لغتيان 🗣️</a>
+        <ul>
+            <li><a href="index.html">🏠 الرئيسية</a></li>
+            <li><a href="grammar.html">📝 القواعد</a></li>
+            <li><a href="videos.html">📺 المحاضرات</a></li>
+            <li><a href="games.html" class="active">🎮 الألعاب</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        
+        <div class="profile-card">
+            <div class="avatar-container">
+                <img class="avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=LoghatyanUser" alt="Avatar">
+                <span class="rank-badge">🏆 المركز الـ 3</span>
+            </div>
+            <h3 id="profileName">أحمد محمد (أنت)</h3>
+            <span class="user-title">🔥 قناص الكلمات الكاسح</span>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>نقاطك الحالية</span>
+                    <var id="userScoreDisplay">1240</var>
+                </div>
+                <div class="stat-box">
+                    <span>مستوى الحساب</span>
+                    <var style="color: #a855f7;">Lv.14</var>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-arena">
+            <div class="arena-header">
+                <h1>ساحة التحدي السريع (Word Sniper) 🎯</h1>
+                <p>تحدي السرعة الأقوى بين الصحاب؛ اختر الترجمة الصحيحة قبل انتهاء شريط الوقت المشتعل!</p>
+            </div>
+
+            <div class="game-card">
+                <div class="timer-bar-container">
+                    <div class="timer-bar" id="timeBar"></div>
+                </div>
+
+                <div class="game-meta-top">
+                    <span style="color: #a855f7; font-weight: bold; font-size: 14px;">الجولة المستمرة</span>
+                    <div class="live-timer" id="timerSeconds">⏱️ 5.0s</div>
+                </div>
+
+                <div class="target-word-box">
+                    <span>ما هو المعنى الصحيح لـ:</span>
+                    <h2 id="targetWord">Challenge</h2>
+                </div>
+
+                <div class="options-grid">
+                    <button class="option-btn" onclick="submitAnswer(this)">تحدّي</button>
+                    <button class="option-btn" onclick="submitAnswer(this)">مدرسة</button>
+                    <button class="option-btn" onclick="submitAnswer(this)">كتابة</button>
+                    <button class="option-btn" onclick="submitAnswer(this)">سهل</button>
+                </div>
+            </div>
+
+            <div class="leaderboard-card">
+                <h4>👑 سكور شلة الصحاب هذا الأسبوع</h4>
+                
+                <div class="friend-row">
+                    <div class="friend-info">
+                        <img class="friend-pic" src="https://api.dicebear.com/7.x/bottts/svg?seed=Friend1">
+                        <span class="friend-name">مصطفى كريم 🥇</span>
+                    </div>
+                    <span class="friend-score">1580 Pts</span>
+                </div>
+
+                <div class="friend-row">
+                    <div class="friend-info">
+                        <img class="friend-pic" src="https://api.dicebear.com/7.x/bottts/svg?seed=Friend2">
+                        <span class="friend-name">عمر فاروق 🥈</span>
+                    </div>
+                    <span class="friend-score">1420 Pts</span>
+                </div>
+
+                <div class="friend-row" style="background: rgba(56, 189, 248, 0.05); padding: 10px; border-radius: 10px;">
+                    <div class="friend-info">
+                        <img class="friend-pic" src="https://api.dicebear.com/7.x/bottts/svg?seed=LoghatyanUser" style="border-color: #38bdf8;">
+                        <span class="friend-name" style="color: #38bdf8; font-weight: bold;">أحمد محمد (أنت) 🥉</span>
+                    </div>
+                    <span class="friend-score" style="color: #38bdf8;">1240 Pts</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // بنك التحديات السريعة
+        const dataset = [
+            { q: "Challenge", options: ["تحدّي", "مدرسة", "كتابة", "سهل"], correct: "تحدّي" },
+            { q: "Experience", options: ["خبرة", "طائرة", "نوم", "لعبة"], correct: "خبرة" },
+            { q: "Improve", options: ["يطوّر", "يأكل", "يضيع", "يتحدث"], correct: "يطوّر" },
+            { q: "Confident", options: ["واثق", "خائف", "متردد", "غاضب"], correct: "واثق" }
+        ];
+
+        let currentIdx = 0;
+        let score = 1240;
+        let timeLeft = 50; // 5 ثوانٍ مقسمة على أجزاء من مئة
+        let timerInterval;
+
+        function startRound() {
+            if (currentIdx >= dataset.length) currentIdx = 0;
+            const currentData = dataset[currentIdx];
+            
+            // تحديث السؤال
+            document.getElementById('targetWord').innerText = currentData.q;
+            
+            // توزيع الاختيارات
+            const buttons = document.querySelectorAll('.option-btn');
+            currentData.options.forEach((opt, idx) => {
+                buttons[idx].innerText = opt;
+                buttons[idx].style.background = "rgba(15, 23, 42, 0.6)";
+                buttons[idx].style.borderColor = "rgba(255, 255, 255, 0.08)";
+            });
+
+            // إعادة تشغيل عداد الوقت المشتعل
+            timeLeft = 50;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            const percentage = (timeLeft / 50) * 100;
+            document.getElementById('timeBar').style.width = percentage + "%";
+            document.getElementById('timerSeconds').innerText = `⏱️ ${(timeLeft / 10).toFixed(1)}s`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // الوقت انتهى، الانتقال للسؤال التالي بدون نقاط
+                currentIdx++;
+                setTimeout(startRound, 800);
+            }
+        }
+
+        function submitAnswer(btn) {
+            clearInterval(timerInterval);
+            const chosen = btn.innerText;
+            const correct = dataset[currentIdx].correct;
+
+            if (chosen === correct) {
+                btn.style.background = "rgba(34, 197, 94, 0.2)";
+                btn.style.borderColor = "#22c55e";
+                score += 20; // زيادة السكور في البروفايل فوراً!
+                document.getElementById('userScoreDisplay').innerText = score;
+            } else {
+                btn.style.background = "rgba(239, 68, 68, 0.2)";
+                btn.style.borderColor = "#ef4444";
+            }
+
+            currentIdx++;
+            setTimeout(startRound, 1000);
+        }
+
+        // تشغيل الجولة الأولى فوراً عند فتح اللعبة
+        window.onload = startRound;
+    </script>
+</body>
+</html>

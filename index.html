@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة لغتيان - الرئيسية</title>
+    <style>
+        /* إعدادات عامة وتصفير الهوامش */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* خلفية أسود سيراميك فخمة (Matte Ceramic Black) */
+        body {
+            background: linear-gradient(135deg, #0b0d17, #111424); 
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* شريط التنقل العلوي الداكن والشفاف */
+        nav {
+            background-color: rgba(11, 13, 23, 0.9);
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #38bdf8; 
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+        }
+
+        /* ستايل خاص ومميز لزرار "مستواك" لما يظهر */
+        #levelLink {
+            display: none; /* مخفي افتراضياً وهيظهر بالـ JS بعد التسجيل */
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        #levelLink:hover {
+            background-color: #22c55e;
+            color: white;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+
+        /* المحتوى اللي في النص */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 160px 20px 60px 20px; 
+            text-align: center;
+        }
+
+        /* تنسيق حاوية اللوجو الدائرية */
+        .logo-container {
+            width: 140px; 
+            height: 140px; 
+            border-radius: 50%; 
+            background-color: rgba(255, 255, 255, 0.03); 
+            border: 2px solid rgba(56, 189, 248, 0.2); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+            margin-bottom: 25px;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.25); 
+        }
+
+        .logo-container img {
+            width: 98%; 
+            height: 98%; 
+            object-fit: cover; 
+            border-radius: 50%; 
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            color: #ffffff;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .sub-text {
+            font-size: 16px;
+            color: #94a3b8;
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* شريط البحث */
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 25px;
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .search-error {
+            font-size: 14px;
+            color: #ef4444; 
+            margin-bottom: 25px;
+            height: 20px; 
+            font-weight: 600;
+        }
+
+        /* إحصائيات سريعة */
+        .stats-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 24px;
+            font-weight: bold;
+            color: #38bdf8;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* تنسيق الـ Mascot */
+        .mascot-wrapper {
+            position: fixed;
+            bottom: 25px;
+            right: 25px; 
+            z-index: 2000;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .speech-bubble {
+            background-color: #1e293b;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            text-align: center;
+            position: relative;
+            animation: floatAnimation 2s ease-in-out infinite alternate;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 45px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #1e293b transparent;
+        }
+
+        .speech-bubble p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .mascot-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .mascot-btn.quiz-style {
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .mascot-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .mascot-character {
+            font-size: 65px; 
+            user-select: none;
+            cursor: pointer;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .mascot-character:hover {
+            transform: rotate(-10deg) scale(1.1); 
+        }
+
+        @keyframes floatAnimation {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo-text">لغتيان 🗣️</a>
+        <ul>
+            <li><a href="quiz.html" id="levelLink">🎯 مستواك</a></li>
+            
+            <li><a href="videos.html">📺 الفيديوهات</a></li>
+            <li><a href="quiz.html">📝 اختبارات</a></li>
+            <li><a href="games.html">🎮 ألعاب أونلاين</a></li>
+            <li><a href="grammar.html">📚 قواعد</a></li>
+            <li><a href="about.html">🎯 من نحن</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="logo-container">
+            <img src="logo.png" alt="لوجو منصة لغتيان">
+        </div>
+        
+        <h1 class="welcome-text">منصة لغتيان</h1>
+        <p class="sub-text">وجهتك البسيطة والذكية لتطوير لغتك الإنجليزية من الصفر حتى الإتقان.</p>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="اكتب (فيديو)، (اختبار)، أو (لعبة) ثم اضغط Enter..." onkeypress="handleSearch(event)">
+        </div>
+        
+        <div id="searchError" class="search-error"></div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-num">+50</span>
+                <span class="stat-label">فيديو تعليمي</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">+100</span>
+                <span class="stat-label">اختبار تفاعلي</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">مجاناً</span>
+                <span class="stat-label">100% بدون إعلانات</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mascot-wrapper" id="mascotAlert">
+        <div class="speech-bubble">
+            <p id="mascotText">⚠️ <b>Warning:</b> If you don't register, you won't be able to play online!<br><span style="color:#38bdf8;">لو مسجلتش مش هتعرف تخش أونلاين وتلعب!</span></p>
+            <a href="register.html" id="mascotBtn" class="mascot-btn">سجل حسابك الآن 🚀</a>
+        </div>
+        <div class="mascot-character" id="mascotBody">🦉</div>
+    </div>
+
+    <script>
+        // المنطق الذكي لتحديث حالة الموقع والـ Navbar بعد التسجيل
+        document.addEventListener("DOMContentLoaded", function() {
+            const registeredUser = localStorage.getItem('userName');
+            const userPoints = localStorage.getItem('userPoints') || '0';
+            
+            const levelLink = document.getElementById('levelLink');
+            const mascotText = document.getElementById('mascotText');
+            const mascotBtn = document.getElementById('mascotBtn');
+            const mascotBody = document.getElementById('mascotBody');
+
+            // 👑 لو المستخدم مسجل حساب:
+            if (registeredUser) {
+                
+                // 1. إظهار زرار "🎯 مستواك" فوق في الـ Navbar مع عرض نقاطه الحالية (الـ 10 نقاط)
+                levelLink.innerText = `🎯 مستواك (${userPoints}🪙)`;
+                levelLink.style.display = 'block'; 
+
+                // 2. تحديث كلام البومة
+                mascotText.innerHTML = `👋 <b>Welcome back, ${registeredUser}!</b><br>Come on, check your English level right now!<br><span style="color:#22c55e;">أهلاً بك مجدداً! خش شوف مستواك في الإنجليزي دلوقتي!</span>`;
+                
+                // 3. تحديث زرار البومة
+                mascotBtn.innerText = "اكتشف مستواك الآن 📝";
+                mascotBtn.href = "quiz.html";
+                mascotBtn.classList.add('quiz-style');
+
+                mascotBody.onclick = function() {
+                    window.location.href = "quiz.html";
+                };
+            }
+        });
+
+        // نظام البحث
+        function handleSearch(event) {
+            if (event.key === "Enter") {
+                const query = document.getElementById("searchInput").value.trim().toLowerCase();
+                const errorDiv = document.getElementById("searchError");
+                errorDiv.innerText = "";
+
+                if (query.includes("فيديو") || query.includes("شرح") || query.includes("video")) {
+                    window.location.href = "videos.html";
+                } else if (query.includes("اختبار") || query.includes("امتحان") || query.includes("quiz")) {
+                    window.location.href = "quiz.html";
+                } else if (query.includes("لعبة") || query.includes("العاب" ) || query.includes("game")) {
+                    window.location.href = "games.html";
+                } else if (query.includes("قواعد") || query.includes("جرامر") || query.includes("grammar")) {
+                    window.location.href = "grammar.html";
+                } else if (query === "") {
+                    errorDiv.innerText = "برجاء كتابة شيء للبحث عنه أولاً!";
+                } else {
+                    errorDiv.innerText = "هذا الدرس ليس موجوداً بعد.. انتظرنا قريباً! 🎯";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لغتيان - إنشاء حسابك التعليمي</title>
+    <style>
+        /* إعدادات عامة وتصفير الهوامش */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* خلفية أسود سيراميك فخمة ومتناسقة مع الرئيسية */
+        body {
+            background: linear-gradient(135deg, #0b0d17, #111424); 
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* كارت التسجيل الرئيسي */
+        .register-card {
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .register-card h2 {
+            font-size: 26px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .register-card p {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* زاوية رفع الصورة الشخصية */
+        .avatar-upload {
+            position: relative;
+            max-width: 120px;
+            margin: 0 auto 30px auto;
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px dashed #38bdf8;
+            background-color: rgba(255, 255, 255, 0.02);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+            cursor: pointer;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none; 
+        }
+
+        .avatar-preview span {
+            font-size: 12px;
+            color: #64748b;
+            padding: 10px;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        /* تنسيق خانات الإدخال */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 20px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+        }
+
+        .form-group select option {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        /* زرار الحفظ */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        /* ======================================================== */
+        /* 🚨 شاشة النجاح (Success Modal) مع تأثيرات الانميشن 🚨 */
+        /* ======================================================== */
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 13, 23, 0.85); /* تعتيم الخلفية */
+            backdrop-filter: blur(10px); /* بلور ناعم */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease; /* ترانزيشن ظهور الخلفية */
+        }
+
+        .success-card {
+            background-color: #111424;
+            border: 2px solid #22c55e; /* إطار أخضر مضيء */
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(34, 197, 94, 0.2);
+            width: 90%;
+            max-width: 420px;
+            transform: scale(0.7) translateY(30px); /* بيبدأ صغير وساقط لتحت */
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* تأثير بوب أب مطاطي احترافي */
+        }
+
+        /* كلاس التفعيل عند ضغط الزرار */
+        .success-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .success-overlay.show .success-card {
+            transform: scale(1) translateY(0); /* بيرجع لوضعه الطبيعي نتيجه الترانزيشن */
+        }
+
+        .success-icon {
+            font-size: 65px;
+            color: #22c55e;
+            margin-bottom: 20px;
+            animation: pulseIcon 1.5s infinite ease-in-out;
+        }
+
+        .success-card h3 {
+            font-size: 26px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        /* ستايل الهدية والـ 10 نقاط المضيئة */
+        .points-reward {
+            display: inline-block;
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin: 15px 0;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
+        }
+
+        .success-card p.redirect-text {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.4)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.4)); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-card">
+        <h2>ملفك التعليمي في لغتيان 📝</h2>
+        <p>سجل بياناتك لتخصيص رحلة تعلم الإنجليزية الخاصة بك</p>
+
+        <form id="profileForm" onsubmit="saveProfile(event)">
+            
+            <div class="avatar-upload" onclick="document.getElementById('imageInput').click()">
+                <div class="avatar-preview" id="avatarPreview">
+                    <span id="uploadText">اضغط هنا لرفع صورتك 🖼️</span>
+                    <img id="userAvatar" src="" alt="الصورة الشخصية">
+                </div>
+                <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+            </div>
+
+            <div class="form-group">
+                <label for="userName">الاسم بالكامل:</label>
+                <input type="text" id="userName" placeholder="اكتب اسمك هنا..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="userCountry">البلد:</label>
+                <select id="userCountry" required>
+                    <option value="" disabled selected>اختر بلدك...</option>
+                    <option value="مصر">مصر 🇪🇬</option>
+                    <option value="السعودية">السعودية 🇸🇦</option>
+                    <option value="الإمارات">الإمارات 🇦🇪</option>
+                    <option value="العراق">العراق 🇮🇶</option>
+                    <option value="المغرب">المغرب 🇲🇦</option>
+                    <option value="أخرى">بلد آخر 🌍</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="userLevel">مستواك الحالي في الإنجليزية:</label>
+                <select id="userLevel" required>
+                    <option value="" disabled selected>حدد مستواك التقريبي...</option>
+                    <option value="مبتدئ">مبتدئ من الصفر (A1-A2)</option>
+                    <option value="متوسط">متوسط - أفهم ولا أتحدث بطلاقة (B1-B2)</option>
+                    <option value="متقدم">متقدم - أريد الطلاقة الكاملة (C1-C2)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">حفظ وتأكيد الحساب 🚀</button>
+        </form>
+    </div>
+
+    <div class="success-overlay" id="successScreen">
+        <div class="success-card">
+            <div class="success-icon">🎉</div>
+            <h3>Success! تم التسجيل بنجاح</h3>
+            <p style="color: #cbd5e1; font-size: 15px;">أهلاً بك في منصة لغتيان التعليمية</p>
+            
+            <div class="points-reward">
+                🎁 تم إضافة +10 نقاط في محفظتك!
+            </div>
+            
+            <p class="redirect-text">جاري إعداد حسابك ونقلك للرئيسية تلقائياً...</p>
+        </div>
+    </div>
+
+    <script>
+        // معاينة الصورة الشخصية فوراً عند الاختيار
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imgElement = document.getElementById('userAvatar');
+                const textElement = document.getElementById('uploadText');
+                
+                imgElement.src = reader.result;
+                imgElement.style.display = 'block';
+                textElement.style.display = 'none';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // حفظ البيانات وإظهار كارت النجاح والـ 10 نقاط
+        function saveProfile(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('userName').value;
+            const country = document.getElementById('userCountry').value;
+            const level = document.getElementById('userLevel').value;
+            const avatarSrc = document.getElementById('userAvatar').src;
+
+            // حفظ بيانات المستخدم في الكاش
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userCountry', country);
+            localStorage.setItem('userLevel', level);
+            
+            // 🪙 إضافة الـ 10 نقاط في محفظة المستخدم التعليمية داخل الـ LocalStorage
+            localStorage.setItem('userPoints', '10');
+
+            if(avatarSrc && !avatarSrc.includes('window.location')) {
+                localStorage.setItem('userAvatar', avatarSrc);
+            }
+
+            // إطلاق شاشة النجاح بالترانزيشن والأنيميشن الأخضر المضيء
+            document.getElementById('successScreen').classList.add('show');
+            
+            // انتظر 3 ثوانٍ للاستمتاع بالحركة البصرية ثم التوجيه التلقائي
+            setTimeout(function() {
+                window.location.href = "index.html";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

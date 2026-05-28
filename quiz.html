@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لغتيان - اختبار تحديد المستوى الذكي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0d17, #111424); 
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        nav {
+            background-color: rgba(11, 13, 23, 0.9);
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #38bdf8; 
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            align-items: center;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .points-badge {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 20px 40px 20px;
+        }
+
+        .quiz-card {
+            background-color: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        
+        .level-selection h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .level-selection p {
+            color: #94a3b8;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .level-btn {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px 25px;
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .level-btn.beginner:hover:not(.locked) { border-color: #38bdf8; background-color: rgba(56, 189, 248, 0.1); transform: translateX(-5px); }
+        .level-btn.intermediate:hover:not(.locked) { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.1); transform: translateX(-5px); }
+        .level-btn.advanced:hover:not(.locked) { border-color: #ec4899; background-color: rgba(236, 72, 153, 0.1); transform: translateX(-5px); }
+
+        /* تزيين المستويات المقفولة والمكتملة */
+        .level-btn.locked {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-color: rgba(255, 255, 255, 0.03);
+            color: #64748b;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .score-badge {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .quiz-engine {
+            display: none;
+            text-align: right;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            list-style: none;
+        }
+
+        .option-item {
+            background-color: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: #cbd5e1;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .option-item.correct {
+            background-color: rgba(34, 197, 94, 0.15) !important;
+            border-color: #22c55e !important;
+            color: #22c55e !important;
+            font-weight: bold;
+        }
+
+        .option-item.wrong {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+        }
+
+        .explanation-box {
+            display: none;
+            margin-top: 25px;
+            background-color: rgba(15, 23, 42, 0.8);
+            border-right: 4px solid #38bdf8;
+            padding: 18px;
+            border-radius: 8px;
+            text-align: right;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .explanation-box.wrong-border { border-right-color: #ef4444; }
+        .explanation-box.correct-border { border-right-color: #22c55e; }
+
+        .explanation-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.7;
+            min-height: 40px;
+        }
+
+        .explanation-text::after {
+            content: '┃';
+            animation: blink 0.6s infinite;
+            color: #38bdf8;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3); }
+
+        .result-screen { display: none; text-align: center; }
+        .result-icon { font-size: 60px; margin-bottom: 20px; }
+        .score-text { font-size: 24px; color: white; font-weight: bold; margin-bottom: 10px; }
+        .back-btn { margin-top: 25px; padding: 12px 30px; background: linear-gradient(135deg, #38bdf8, #0284c7); border: none; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; }
+
+        /* 🌟 ترانزيشن وفول سكرين الأنيميشن الختامي الفخم 🌟 */
+        .all-completed-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #090a10, #131a35);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+        }
+
+        .all-completed-screen.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .final-box {
+            transform: scale(0.8);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 550px;
+        }
+
+        .all-completed-screen.show .final-box {
+            transform: scale(1);
+        }
+
+        .final-title-ar { font-size: 32px; font-weight: 900; color: #38bdf8; margin-bottom: 8px; }
+        .final-desc-ar { font-size: 18px; color: #e2e8f0; margin-bottom: 25px; line-height: 1.6; }
+        .final-title-en { font-size: 24px; font-weight: 800; color: #a855f7; margin-bottom: 5px; font-family: sans-serif; }
+        .final-desc-en { font-size: 15px; color: #94a3b8; margin-bottom: 35px; line-height: 1.5; font-family: sans-serif; }
+
+        .final-home-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #a855f7, #38bdf8);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            transition: all 0.3s ease;
+        }
+        .final-home-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.5); }
+
+        /* زرار الريست لإعادة الاختبارات بالكامل لو المستخدم حب */
+        .reset-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #64748b;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+        .reset-btn:hover { color: #ef4444; border-color: rgba(239,68,68,0.2); }
+
+        @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo-text">لغتيان 🗣️</a>
+        <ul>
+            <li><a href="index.html">🏠 الرئيسية</a></li>
+            <li><a href="videos.html">📺 الفيديوهات</a></li>
+            <li><a href="games.html">🎮 ألعاب أونلاين</a></li>
+            <li class="points-badge" id="navPoints">🪙 10 Points</li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="quiz-card" id="mainCard">
+            
+            <div class="level-selection" id="levelSelectionBlock">
+                <h2>اختر مستواك الحالي 🎯</h2>
+                <p>حدد مستواك لنقوم بتخصيص أسئلة وتفسيرات تفصيلية تناسبك</p>
+                
+                <div class="level-buttons">
+                    <button class="level-btn beginner" id="btn-beginner" onclick="startQuiz('beginner')">
+                        <span>🌱 مبتدئ من الصفر</span> <span class="badge" id="badge-beginner">A1 - A2</span>
+                    </button>
+                    <button class="level-btn intermediate" id="btn-intermediate" onclick="startQuiz('intermediate')">
+                        <span>⚡ متوسط (أفهم ولا أتحدث)</span> <span class="badge" id="badge-intermediate">B1 - B2</span>
+                    </button>
+                    <button class="level-btn advanced" id="btn-advanced" onclick="startQuiz('advanced')">
+                        <span>🔥 متقدم (أريد الطلاقة)</span> <span class="badge" id="badge-advanced">C1 - C2</span>
+                    </button>
+                </div>
+                <button class="reset-btn" onclick="resetAllProgress()">🔄 إعادة تصفير كافة المستويات</button>
+            </div>
+
+            <div class="quiz-engine" id="quizEngineBlock">
+                <div class="quiz-header">
+                    <h3 id="currentLevelTitle">المستوى</h3>
+                    <span style="color: #64748b;" id="questionCounter">السؤال</span>
+                </div>
+                
+                <div class="question-text" id="questionText">Loading...</div>
+
+                <ul class="options-list" id="optionsContainer"></ul>
+
+                <div class="explanation-box" id="explanationBox">
+                    <div class="explanation-title" id="expTitle">💡 التفسير التعليمي التفصيلي:</div>
+                    <div class="explanation-text" id="expText"></div>
+                </div>
+
+                <button class="next-btn" id="nextQuestionBtn" onclick="goToNextQuestion()">السؤال التالي ➡️</button>
+            </div>
+
+            <div class="result-screen" id="resultBlock">
+                <div class="result-icon">🏆</div>
+                <div class="score-text">عمل رائع! أنهيت الاختبار</div>
+                <p id="rewardMessage" style="color: #94a3b8; font-size: 15px; margin-bottom: 20px;"></p>
+                <button class="back-btn" onclick="backToLevels()">العودة لاختيار المستويات 🎯</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="all-completed-screen" id="globalEndScreen">
+        <div class="final-box">
+            <div style="font-size: 75px; margin-bottom: 15px;">🚀</div>
+            <div class="final-title-ar">اخرج للرئيسية هتلاقي حاجات أجمد!</div>
+            <div class="final-desc-ar">لقد قمت بتقفيل وحل جميع مستويات كويز لغتيان بنجاح ساحق. حان الوقت لتكتشف بقية الألعاب والفيديوهات الحصيقية بالداخل!</div>
+            
+            <div class="final-title-en">Go to the Home Page for cooler stuff!</div>
+            <div class="final-desc-en">You've successfully completed all levels. Explore our interactive world, native videos, and premium multiplayer mini-games right now!</div>
+            
+            <button class="final-home-btn" onclick="window.location.href='index.html'">انطلق للرئيسية الآن 🏠</button>
+        </div>
+    </div>
+
+    <script>
+        // 💾 بنك الأسئلة الـ 90 سؤال كاملين من أفكاري ومجهزين للنظام
+        const quizDatabase = {
+            beginner: [
+                { q: "They ___ playing basketball right now.", options: ["am", "is", "are", "be"], correct: 2, exp: "الفاعل جمع (They) في المضارع المستمر بياخد الفعل المساعد (are)." },
+                { q: "I ___ to school yesterday.", options: ["go", "going", "went", "will go"], correct: 2, exp: "كلمة (yesterday) بتدل على الماضي البسيط، والتصريف التاني لـ go هو went." },
+                { q: "What is the plural of (Child)?", options: ["childs", "childes", "children", "childrens"], correct: 2, exp: "كلمة child جمعها شاذ وهو children بدون S." },
+                { q: "This is ___ interesting book.", options: ["a", "an", "the", "no article"], correct: 1, exp: "كلمة interesting تبدأ بصوت متحرك عشان كدا بناخد an." },
+                { q: "My brother ___ like milk.", options: ["don't", "doesn't", "not", "isn't"], correct: 1, exp: "المفرد الغائب بننفي الفعل بتاعه في المضارع البسيط باستخدام doesn't." },
+                { q: "___ is your name?", options: ["What", "Where", "Who", "When"], correct: 0, exp: "أداة الاستفهام (What) بتستخدم للسؤال عن غير العاقل والأشياء كالاسم." },
+                { q: "I usually ___ up at 7 AM.", options: ["wake", "wakes", "woke", "waking"], correct: 0, exp: "مع الضمير I في المضارع البسيط، بيجي الفعل في المصدر بدون إضافات." },
+                { q: "Look! The birds ___ in the sky.", options: ["fly", "is flying", "are flying", "flown"], correct: 2, exp: "كلمة Look بتدل على المضارع المستمر، والفاعل جمع بناخد are + v-ing." },
+                { q: "She is ___ than her sister.", options: ["tall", "taller", "tallest", "more tall"], correct: 1, exp: "في مقارنة الصفات القصيرة بين اثنين بنضيف er للصفة وبعدها than." },
+                { q: "We don't have ___ money left.", options: ["many", "some", "any", "a"], correct: 2, exp: "بنستخدم any في الجمل المنفية والاستفهام مع الأسماء غير المعدودة." },
+                { q: "This pen belongs to me. It is ___.", options: ["my", "mine", "me", "myself"], correct: 1, exp: "ضمير الملكية اللي بيجي في آخر الجملة وبدون اسم وراه هو mine." },
+                { q: "Yesterday, we ___ a beautiful movie.", options: ["see", "saw", "seen", "seeing"], correct: 1, exp: "التصريف الثاني للماضي البسيط من فعل see هو saw." },
+                { q: "He drives the car ___.", options: ["careful", "carefully", "carefulness", "more careful"], correct: 1, exp: "بنستخدم الحال (Adverb) المنتهي بـ ly لوصف طريقة حدوث الفعل (القيادة)." },
+                { q: "Are you interested ___ reading?", options: ["on", "at", "in", "for"], correct: 2, exp: "الصفة interested بيجي معاها دايماً حرف الجر in بمعنى مهتم بـ." },
+                { q: "There is ___ apple on the table.", options: ["a", "an", "some", "any"], correct: 1, exp: "اسم مفرد يبدأ بصوت متحرك نضع قبله أداة النكرة an." },
+                { q: "Where ___ you live?", options: ["do", "does", "is", "are"], correct: 0, exp: "في السؤال بالمضارع البسيط، الضمير you بياخد الفعل المساعد do." },
+                { q: "He ___ a new car last week.", options: ["buy", "buys", "bought", "buying"], correct: 2, exp: "كلمة last week تدل على الماضي البسيط، والتصريف الثاني لـ buy هو bought." },
+                { q: "They ___ English at the moment.", options: ["study", "studies", "are studying", "studied"], correct: 2, exp: "عبارة at the moment تدل على المضارع المستمر، والجمع بياخد are + v-ing." },
+                { q: "This is the ___ book I have ever read.", options: ["good", "better", "best", "more good"], correct: 2, exp: "صيغة التفضيل العليا من الصفة الشاذة good هي the best." },
+                { q: "We go to school ___ the morning.", options: ["at", "on", "in", "for"], correct: 2, exp: "فترات اليوم (the morning/afternoon/evening) بتاخد حرف الجر in." },
+                { q: "She ___ swim very well.", options: ["can", "cans", "is can", "can to"], correct: 0, exp: "الأفعال الناقصة مثل can بيجي بعدها المصدر علطول وبدون إضافات." },
+                { q: "I would like ___ water, please.", options: ["any", "some", "many", "a"], correct: 1, exp: "بنستخدم some في جمل العرض والطلب المهذب مع الأسماء غير المعدودة." },
+                { q: "___ did you do yesterday?", options: ["Where", "When", "What", "Who"], correct: 2, exp: "السؤال عن الفعل أو الشيء غير العاقل في الماضي بـ What." },
+                { q: "The cat is sleeping ___ the chair.", options: ["under", "between", "through", "during"], correct: 0, exp: "حرف الجر under يعني (تحت) وهو الأنسب لسياق الجملة النحوي والمعنوي." },
+                { q: "He is a doctor. ___ works in a hospital.", options: ["He", "She", "They", "It"], correct: 0, exp: "الضمير العائد على طبيب مفرد مذكر غائب هو He." },
+                { q: "I have ___ orange and two bananas.", options: ["a", "an", "some", "any"], correct: 1, exp: "كلمة orange تبدأ بصوت متحرك لذا نستخدم أداة النكرة an." },
+                { q: "They ___ at home yesterday.", options: ["was", "were", "are", "been"], correct: 1, exp: "فعل verb to be في الماضي مع ضمائر الجمع هو were." },
+                { q: "She ___ to music every night.", options: ["listen", "listens", "listening", "listened"], correct: 1, exp: "المضارع البسيط مع المفرد (She) بنضيف للفعل S." },
+                { q: "We ___ to London next month.", options: ["travel", "traveled", "will travel", "travels"], correct: 2, exp: "كلمة next month تدل على المستقبل البسيط، فبنستخدم will + المصدر." },
+                { q: "This car is very ___.", options: ["fast", "fastly", "faster", "fastest"], correct: 0, exp: "وصف الاسم بصفة عادية بدون مقارنة نستخدم الصفة الأصلية fast." }
+            ],
+            intermediate: [
+                { q: "We went out ___ the heavy rain.", options: ["although", "despite", "because", "however"], correct: 1, exp: "الرابط despite يعني بالرغم من وبيجي بعده اسم وليس جملة كاملة." },
+                { q: "I have been learning English ___ five years.", options: ["since", "for", "ago", "during"], correct: 1, exp: "بنستخدم for للتعبير عن طول المدة الزمنية بالكامل في المضارع التام." },
+                { q: "The cake ___ by Sarah yesterday.", options: ["ate", "was eaten", "was eating", "has eaten"], correct: 1, exp: "مبني للمجهول في الماضي البسيط: مفعول مفرد + was + تصريف تالت." },
+                { q: "If I ___ you, I would study harder.", options: ["am", "was", "were", "be"], correct: 2, exp: "حالة if التانية للتخيل والنصيحة بنستخدم فيها were مع كل الضمائر." },
+                { q: "I am looking forward to ___ you soon.", options: ["see", "saw", "seen", "seeing"], correct: 3, exp: "المصطلح look forward to بيجي بعده فعل مضاف له ing بشكل شاذ." },
+                { q: "What is the meaning of the idiom (Piece of cake)?", options: ["Delicious food", "Very easy task", "A birthday party", "Heavy object"], correct: 1, exp: "المصطلح المجازي (Piece of cake) معناه أمر سهل للغاية." },
+                { q: "By the time he arrived, the train ___.", options: ["leaves", "has left", "had left", "was leaving"], correct: 2, exp: "الماضي التام (had + p.p) بيعبر عن حدث تم قبل وقوع حدث آخر في الماضي." },
+                { q: "She suggested ___ to the cinema.", options: ["go", "to go", "going", "went"], correct: 2, exp: "الفعل suggest من الأفعال التي يتبعها Gerund (الفعل + ing)." },
+                { q: "I don't mind ___ you with your homework.", options: ["help", "to help", "helping", "helped"], correct: 2, exp: "التركيبة don't mind يتبعها مباشرة فعل مضاف له ing." },
+                { q: "He is the man ___ car was stolen.", options: ["who", "whom", "whose", "which"], correct: 2, exp: "اسم الموصول (whose) بيستخدم لإثبات الملكية لما قبله وما بعده." },
+                { q: "You ___ smoke in the hospital. It's forbidden.", options: ["don't have to", "mustn't", "needn't", "shouldn't"], correct: 1, exp: "الفعل mustn't بيعبر عن التحريم القاطع والقانوني للأشياء." },
+                { q: "I wish I ___ more money right now.", options: ["have", "had", "have had", "would have"], correct: 1, exp: "التمني في الحاضر بـ wish بنحول الجملة بعده لزمن الماضي البسيط." },
+                { q: "The climate is getting ___ warmer every year.", options: ["more and more", "less and less", "much and more", "many"], correct: 0, exp: "التعبير عن الزيادة المستمرة في الصفة بمصطلح (more and more)." },
+                { q: "He left the key ___ he wouldn't forget it.", options: ["so that", "in order to", "because of", "although"], correct: 0, exp: "الرابط (so that) معناه 'لكي' وبيجي بعده جملة كاملة فاعل + فعل ناقص." },
+                { q: "She behaves as if she ___ everything.", options: ["know", "knows", "knew", "has known"], correct: 2, exp: "بعد التعبيرات التخيلية الحالية زي as if بنستخدم ماضي افتراضي (knew)." },
+                { q: "Neither Sarah nor her friends ___ present.", options: ["is", "are", "was", "am"], correct: 1, exp: "قاعدة Neither... nor الفعل بيتبع الفاعل الثاني (her friends) وهو جمع." },
+                { q: "I used to ___ football when I was young.", options: ["play", "playing", "played", "plays"], correct: 0, exp: "المصطلح used to للتعبير عن عادة قديمة بيجي بعده الفعل في المصدر." },
+                { q: "He avoided ___ my questions.", options: ["answer", "to answer", "answering", "answered"], correct: 2, exp: "الفعل avoid من الأفعال اللي بيجي وراها دايماً v-ing." },
+                { q: "The book ___ I borrowed yesterday is great.", options: ["who", "which", "whose", "whom"], correct: 1, exp: "اسم الموصول (which) بيستخدم مع الأشياء وغير العاقل (The book)." },
+                { q: "He asked me where ___ during the vacation.", options: ["did I go", "I went", "had I gone", "I go"], correct: 1, exp: "في الكلام المنقول، ترتيب السؤال بيتحول لجملة خبرية (فاعل ثم فعل)." },
+                { q: "Unless you ___ harder, you will fail.", options: ["study", "don't study", "studied", "will study"], correct: 0, exp: "كلمة Unless معناها (إذا لم) وتفيد النفي، فبيجي معاها فعل مثبت." },
+                { q: "The phone rang while I ___ a shower.", options: ["take", "am taking", "was taking", "took"], correct: 2, exp: "بعد while بيجي ماضي مستمر (was/were + v-ing) لحدث طويل قطعه حدث آخر." },
+                { q: "I am not used to ___ early in the morning.", options: ["wake", "woke", "waking", "wakes"], correct: 2, exp: "لو جه قبل used to (am/is/are) بيجي وراها فعل مضاف له ing للتعبير عن عادة حالية." },
+                { q: "This test is ___ more difficult than the last one.", options: ["much", "many", "very", "more"], correct: 0, exp: "لتكبير وتكثيف المقارنة قبل الصفة المضاف لها more بنستخدم much." },
+                { q: "He succeeded in ___ the final exam.", options: ["pass", "to pass", "passing", "passed"], correct: 2, exp: "حروف الجر (ما عدا to) بيجي وراها دايماً فعل مضاف له ing." },
+                { q: "You had better ___ a doctor immediately.", options: ["see", "to see", "seeing", "saw"], correct: 0, exp: "المصطلح had better للنصيحة القوية بيجي وراه فعل في المصدر بدون to." },
+                { q: "Although he was tired, he ___ working.", options: ["kept", "stopped", "prevented", "refused"], correct: 0, exp: "معنى الجملة تناقضي: على الرغم من أنه متعب، هو (استمر - kept) في العمل." },
+                { q: "He denies ___ the money.", options: ["steal", "to steal", "stealing", "stole"], correct: 2, exp: "الفعل deny (ينكر) من الأفعال النحوية اللي بيجي وراها Gerund (v-ing)." },
+                { q: "She has ___ been to Paris, she knows it well.", options: ["never", "already", "yet", "since"], correct: 1, exp: "المعنى يقتضي الإثبات (هي زارتها بالفعل وتعرفها جيداً) فبنستخدم already." },
+                { q: "The soup smells ___.", options: ["good", "well", "goodly", "best"], correct: 0, exp: "أفعال الحواس (smell/taste/feel) بيجي وراها صفة عادية وليس حال." }
+            ],
+            advanced: [
+                { q: "Scarcely ___ out of the room when the phone rang.", options: ["she had stepped", "had she stepped", "she stepped", "did she stepped"], correct: 1, exp: "عند البدء بظرف سلبي متقدم مثل Scarcely بنعمل قلب نحوي (Inversion) للفعل والفاعل." },
+                { q: "Which option best describes a 'calamitous' event?", options: ["Fortuitous", "Disastrous", "Benign", "Meticulous"], correct: 1, exp: "كلمة calamitous تعني كارثي أو مأساوي، والمرادف الأدق لها هو Disastrous." },
+                { q: "He spoke as though he ___ the king of the country.", options: ["is", "was", "were", "has been"], correct: 2, exp: "بعد تعبيرات التخيل الافتراضي المستحيل في الحاضر بنستخدم were مع كل الضمائر." },
+                { q: "What is the antonym of the word 'Ubiquitous'?", options: ["Omnipresent", "Scarce", "Pervasive", "Common"], correct: 1, exp: "كلمة Ubiquitous تعني كلي الوجود/في كل مكان، ومضادها الشح والندرة Scarce." },
+                { q: "Environmental groups yield considerable ___ in Washington.", options: ["affluence", "influence", "effluence", "confluence"], correct: 1, exp: "المصطلح النحوي والمعنوي الصحيح هو influence بمعنى نفوذ أو تأثير سياقي." },
+                { q: "It is vital that he ___ the meeting tomorrow.", options: ["attend", "attends", "attended", "should attend to"], correct: 0, exp: "قاعدة الـ Subjunctive (صيغة الشرط الافتراضية) بعد صفات الأهمية بتتطلب مصدر مجرد attend." },
+                { q: "Had I known about the issue, I ___ things differently.", options: ["will do", "would do", "would have done", "had done"], correct: 2, exp: "صيغة الحالة الثالثة لـ if بدون استخدام if (حالة الحذف والتقديم) جوابها would have + p.p." },
+                { q: "The manager resented ___ like a child.", options: ["treating", "to be treated", "being treated", "to treat"], correct: 2, exp: "الفعل resent يتبعه v-ing، وبما أنها مبني للمجهول في المعنى تصبح being treated." },
+                { q: "Try ___ he might, he couldn't open the vault.", options: ["as", "though", "however", "although"], correct: 0, exp: "التركيبة البلاغية (مصدر + as + فاعل + might) تعبر عن التناقض القوي بمعنى 'مهما حاول'." },
+                { q: "She was praised for her ___ handling of the crisis.", options: ["inept", "astute", "clumsy", "frivolous"], correct: 1, exp: "كلمة astute تعني حكيم أو داهية وذكي، وهو المعنى المناسب للثناء على إدارة الأزمات." },
+                { q: "The contract is null and ___.", options: ["void", "empty", "blank", "invalid"], correct: 0, exp: "المصطلح القانوني الثابت والشائع في الإنجليزية للتعبير عن بطلان العقد هو null and void." },
+                { q: "Little ___ that she was being observed.", options: ["she knew", "did she know", "had she known", "she did know"], correct: 1, exp: "البدء بـ Little التقييدية يستوجب عمل Inversion، فنضع الفعل المساعد المضيء قبل الفاعل did she know." },
+                { q: "We need to extricate the company ___ this financial mess.", options: ["from", "with", "of", "off"], correct: 0, exp: "الفعل extricate يعني يخلص أو يحل من مأزق، وحرف الجر المصاحب له دائماً هو from." },
+                { q: "The speech was full of ___ remarks that angered the board.", options: ["laudatory", "disparaging", "complimentary", "benign"], correct: 1, exp: "كلمة disparaging تعني استخفافية أو حاقرة، وهي المعنى المناسب لغضب مجلس الإدارة." },
+                { q: "No sooner had he left ___ it started raining.", options: ["when", "then", "than", "before"], correct: 2, exp: "الرابط المتقدم No sooner بياخد دايماً في شقه الثاني كلمة than على عكس Hardly/Scarcely بتاخد when." },
+                { q: "His argument was based on an erroneous ___.", options: ["premise", "promise", "permit", "practice"], correct: 0, exp: "كلمة premise تعني 'فرضية أو أساس منطكي'، وبناء حجة على فرضية خاطئة هو السياق السليم." },
+                { q: "He is a fastidious worker, which means he is ___.", options: ["lazy", "careless", "very meticulous", "slow"], correct: 2, exp: "كلمة fastidious تعني شديد الدقة والاهتمام بالتفاصيل المجهرية وهي مرادف لـ meticulous." },
+                { q: "The economic crisis has ___ the existing social problems.", options: ["mitigated", "exacerbated", "alleviated", "mollified"], correct: 1, exp: "الفعل exacerbated يعني فاقم أو زاد الأمر سوءاً، وباقي الاختيارات تعني يهدئ أو يلطف." },
+                { q: "He accepted the job ___ with certain reservations.", options: ["albeit", "whereas", "nonetheless", "despite"], correct: 0, exp: "الرابط albeit يعني 'وإن كان/على الرغم من' ويستخدم لربط الصفات أو أشباه الجمل بالتناقض." },
+                { q: "The decision was left to the ___ of the committee.", options: ["discretion", "discrimination", "discrepancy", "disposal"], correct: 0, exp: "تعبير at the discretion of يعني 'تحت تصرف أو تقدير وأمانة الجهة المعنية'." },
+                { q: "She has an insatiable ___ for knowledge.", options: ["appetite", "hunger", "disgust", "apathy"], correct: 0, exp: "المصطلح المجازي المتقدم الشائع هو insatiable appetite يعني شهية لا تنقطع ولا تشبع للمعرفة." },
+                { q: "He was accused of being ___ to his duties.", options: ["negligent", "negligible", "neglected", "neglect"], correct: 0, exp: "الصفة negligent تعني مهمل أو مقصر في واجبه، بينما negligible تعني ضئيل ولا قيمة له." },
+                { q: "___ conditions permitting, the launch will happen tomorrow.", options: ["Atmospheric", "Weather", "Climate", "Air"], correct: 0, exp: "التعبير العلمي الفلكي لوصف أحوال الغلاف الجوي لإطلاق المركبات هو Atmospheric conditions." },
+                { q: "The results are ___ with our expectations.", options: ["commensurate", "comparable", "condescending", "compulsory"], correct: 0, exp: "المصطلح commensurate with يعني 'متكافئ أو متناسب طردياً بالكامل مع'." },
+                { q: "The witness gave a ___ account of the accident.", options: ["lucid", "vague", "opaque", "turbulent"], correct: 0, exp: "كلمة lucid تعني واضح، شفاف، وسهل الفهم والتحليل كشهادة عيان قوية." },
+                { q: "Her performance was devoid ___ any emotion.", options: ["of", "from", "with", "in"], correct: 0, exp: "المصطلح النحوي الثابت devoid of يعني 'خالٍ تماماً من/يفتقر إلى'." },
+                { q: "He is a man of unblemished ___.", options: ["integrity", "integration", "intricacy", "intensity"], correct: 0, exp: "المصطلح البلاغي المدحي المتقدم unblemished integrity يعني 'نزاهة وأمانة مطلقة لا تشوبها شائبة'." },
+                { q: "The project was abandoned due to ___ costs.", options: ["prohibitive", "prohibiting", "prohibited", "prohibition"], correct: 0, exp: "الصفة prohibitive costs تعني تكاليف باهظة جداً تمنع وتعيق استكمال العمل." },
+                { q: "She has a knack ___ picking the right investments.", options: ["for", "at", "in", "with"], correct: 0, exp: "المصطلح have a knack for يعني 'لديه موهبة فطرية أو حاسة سحرية في فعل شيء'." },
+                { q: "The meeting ended in a complete ___.", options: ["fiasco", "fluent", "fixture", "fraction"], correct: 0, exp: "كلمة fiasco تعني فشل ذريع أو فوضى نهائية عارمة." }
+            ]
+        };
+
+        let currentLevel = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userScore = 0;
+        let pointsEarnedInSession = 0;
+        let typingTimer = null; 
+
+        let totalPoints = parseInt(localStorage.getItem('userPoints')) || 10;
+        document.getElementById('navPoints').innerText = `🪙 ${totalPoints} Points`;
+
+        // عند تحميل الصفحة، بنشيك على المستويات المقفولة ونحدث الأزرار
+        window.onload = function() {
+            checkLockedLevels();
+        };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // دالة لفحص وتحديث شكل المستويات المقفولة
+        function checkLockedLevels() {
+            const levels = ['beginner', 'intermediate', 'advanced'];
+            let completedCount = 0;
+
+            levels.forEach(lvl => {
+                const savedScore = localStorage.getItem(`quiz_score_${lvl}`);
+                const btn = document.getElementById(`btn-${lvl}`);
+                const badge = document.getElementById(`badge-${lvl}`);
+
+                if (savedScore !== null) {
+                    btn.classList.add('locked');
+                    btn.onclick = null; // تعطيل الضغط
+                    badge.className = "score-badge";
+                    badge.innerText = `✔️ مكتمل (${savedScore}/30)`;
+                    completedCount++;
+                }
+            });
+
+            // لو قفل الـ 3 مستويات كاملين، بنظهر الشاشة الختامية بترانزيشن
+            if (completedCount === 3) {
+                setTimeout(() => {
+                    const endScreen = document.getElementById('globalEndScreen');
+                    endScreen.classList.add('show');
+                }, 500);
+            }
+        }
+
+        function startQuiz(level) {
+            // منع الدخول لو كان المستوى مقفول
+            if (localStorage.getItem(`quiz_score_${level}`) !== null) return;
+
+            currentLevel = level;
+            let rawQuestions = [...quizDatabase[level]];
+            currentQuestions = shuffleArray(rawQuestions); 
+            
+            currentQuestionIndex = 0;
+            userScore = 0;
+            pointsEarnedInSession = 0;
+
+            const levelNames = { beginner: "🌱 مبتدئ", intermediate: "⚡ متوسط", advanced: "🔥 متقدم" };
+            document.getElementById('currentLevelTitle').innerText = `المستوى: ${levelNames[level]}`;
+
+            document.getElementById('levelSelectionBlock').style.display = 'none';
+            document.getElementById('quizEngineBlock').style.display = 'block';
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            document.getElementById('explanationBox').style.display = 'none';
+            document.getElementById('nextQuestionBtn').style.display = 'none';
+            document.getElementById('expText').innerText = '';
+
+            const currentQ = currentQuestions[currentQuestionIndex];
+            document.getElementById('questionCounter').innerText = `السؤال ${currentQuestionIndex + 1} من ${currentQuestions.length}`;
+            document.getElementById('questionText').innerText = currentQ.q;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = ''; 
+
+            currentQ.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerText = option;
+                li.onclick = () => checkAnswer(index, li);
+                container.appendChild(li);
+            });
+        }
+
+        function checkAnswer(selectedIndex, clickedElement) {
+            const currentQ = currentQuestions[currentQuestionIndex];
+            const allOptions = document.querySelectorAll('.option-item');
+            const expBox = document.getElementById('explanationBox');
+            const expTitle = document.getElementById('expTitle');
+
+            allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+            if (selectedIndex === currentQ.correct) {
+                clickedElement.classList.add('correct');
+                userScore++;
+                pointsEarnedInSession += 2;
+                totalPoints += 2;
+                document.getElementById('navPoints').innerText = `🪙 ${totalPoints} Points`;
+                localStorage.setItem('userPoints', totalPoints);
+                
+                expTitle.innerHTML = "✅ <b>تحليل رائع وإجابة صحيحة!</b> اقرأ القاعدة بالتفصيل:";
+                expBox.className = "explanation-box correct-border";
+            } else {
+                clickedElement.classList.add('wrong');
+                allOptions[currentQ.correct].classList.add('correct');
+                
+                expTitle.innerHTML = "❌ <b>للأسف محاولة خاطئة!</b> ركز في الشرح ده عشان تفهمها:";
+                expBox.className = "explanation-box wrong-border";
+            }
+
+            expBox.style.display = 'block';
+            typeExplanation(currentQ.exp);
+        }
+
+        function typeExplanation(text) {
+            const textContainer = document.getElementById('expText');
+            textContainer.innerText = ''; 
+            let index = 0;
+            
+            clearInterval(typingTimer); 
+
+            typingTimer = setInterval(() => {
+                if (index < text.length) {
+                    textContainer.innerText += text.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(typingTimer);
+                    document.getElementById('nextQuestionBtn').style.display = 'block';
+                }
+            }, 12);
+        }
+
+        function goToNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            // حفظ درجة المستوى ده في الـ localStorage عشان يتقفل وميتفتحش تاني
+            localStorage.setItem(`quiz_score_${currentLevel}`, userScore);
+
+            document.getElementById('quizEngineBlock').style.display = 'none';
+            document.getElementById('resultBlock').style.display = 'block';
+            document.getElementById('rewardMessage').innerHTML = `لقد أجبت على ${userScore} من ${currentQuestions.length} بشكل صحيح.<br><span style="color:#22c55e; font-weight:bold;">🏆 تم إضافة +${pointsEarnedInSession} نقاط في محفظتك بنجاح!</span>`;
+        }
+
+        function backToLevels() {
+            document.getElementById('resultBlock').style.display = 'none';
+            document.getElementById('levelSelectionBlock').style.display = 'block';
+            // تحديث الأزرار والمستويات المقفولة لايف
+            checkLockedLevels();
+        }
+
+        // دالة اختيارية لتصفير البيانات للتحارب والاختبار مجدداً
+        function resetAllProgress() {
+            localStorage.removeItem('quiz_score_beginner');
+            localStorage.removeItem('quiz_score_intermediate');
+            localStorage.removeItem('quiz_score_advanced');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
